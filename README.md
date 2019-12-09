@@ -9,4 +9,5 @@ Data we used  http://reclab.idi.ntnu.no/dataset/
 Future Steps:
 
 + Add more data: including day two and day three
++ Add vmsknn
 + Read papers about advanced GRU4Rec
