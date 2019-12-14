@@ -42,7 +42,11 @@ def evaluate_sessions(pr, test_data, train_data, items=None, cut_off=10, session
     evalutation_point_count = 0
     prev_iid, prev_sid = -1, -1
     mrr, recall = 0.0, 0.0
+<<<<<<< HEAD
     for i in tqdm(range(len(test_data))):
+=======
+    for i in tqdm(range(len(test_data)//5)):
+>>>>>>> 46f0531f7d36e1e9b8f4e1e2dadd8f730e84b367
         sid = test_data[session_key].values[i]
         iid = test_data[item_key].values[i]
         if prev_sid != sid:
