@@ -54,36 +54,53 @@ class ItemKNN:
         '''
         data=data[[self.session_key,self.item_key,self.time_key]]
         data.set_index(np.arange(len(data)), inplace=True)
+        # itemids: all unique articles
+        # n_items: number of unique articles
         self.itemids = data[self.item_key].unique()
         n_items = len(self.itemids)
         data = pd.merge(data, pd.DataFrame({self.item_key: self.itemids, 'ItemIdx': np.arange(len(self.itemids))}),
                         on=self.item_key, how='inner')
+        # sessionids: all unique sessions
         sessionids = data[self.session_key].unique()
         data = pd.merge(data, pd.DataFrame({self.session_key: sessionids, 'SessionIdx': np.arange(len(sessionids))}),
                         on=self.session_key, how='inner')
         supp = data.groupby('SessionIdx').size()
+        # session_offsets: accumulative numbers of items in each session
         session_offsets = np.zeros(len(supp) + 1, dtype=np.int32)
         session_offsets[1:] = supp.cumsum()
         index_by_sessions = data.sort_values(['SessionIdx', self.time_key]).index.values
         supp = data.groupby('ItemIdx').size()
+        # item_offsets: accumulative numbers of sessions in each item
         item_offsets = np.zeros(n_items + 1, dtype=np.int32)
         item_offsets[1:] = supp.cumsum()
         index_by_items = data.sort_values(['ItemIdx', self.time_key]).index.values
         self.sims = dict()
         for i in range(n_items):
             iarray = np.zeros(n_items)
-            start = item_offsets[i]
-            end = item_offsets[i + 1]
-            for e in index_by_items[start:end]:
+            # start: start session for this item, end: next session after this item
+            start = item_offsets[i] # 0
+            end = item_offsets[i + 1] # 3914
+            # for each item we sort their events by time
+            for e in index_by_items[start:end]: # (start-end)=3914 loops
+                # e: event in session that contains item 'start'
+                # index of session with this event
                 uidx = data.SessionIdx.values[e]
+                # start event index of session with start item: 10087
                 ustart = session_offsets[uidx]
+                # end event index of session with start item: 10093
                 uend = session_offsets[uidx + 1]
+                # user_events: [10088 10087 10090 10092 10091 10089]
+                # these are events in the session that read n_items[i]
                 user_events = index_by_sessions[ustart:uend]
+                # we add one for each item (including n_item[i]) in co-occurence matrix 
                 iarray[data.ItemIdx.values[user_events]] += 1
+            # set n_item[i] in the co-occurence as 0
             iarray[i] = 0
+            # regularization: discount those rare items
             norm = np.power((supp[i] + self.lmbd), self.alpha) * np.power((supp.values + self.lmbd), (1.0 - self.alpha))
             norm[norm == 0] = 1
             iarray = iarray / norm
+            # here 100 should be n_sims: only count the most similar 100 items
             indices = np.argsort(iarray)[-1:-1 - 100:-1]
             self.sims[self.itemids[i]] = pd.Series(data=iarray[indices], index=self.itemids[indices])
 

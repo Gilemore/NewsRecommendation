@@ -7,9 +7,6 @@ import numpy as np
 import pandas as pd
 
 
-# add revise about the similarity of sessions: if sessions in the same city, add a decaying function
-
-
 class SessionKNN:
     '''
     SessionKNN( k, sample_size=500, sampling='recent',  similarity = 'cosine', remind=False, pop_boost=0, session_key = 'SessionId', item_key= 'ItemId')
@@ -55,7 +52,7 @@ class SessionKNN:
     '''
 
     def __init__(self, k, sample_size=1000, sampling='recent', similarity='cosine', remind=False, pop_boost=0,
-                 extend=False, normalize=True, session_key='SessionId', item_key='ItemId', time_key='Time',other_variables_1=True,other_variables_2=True,lat="lat",long="long",desktop="Desktop",mobile="Mobile",tablet="Tablet"):
+                 extend=False, normalize=True, session_key='SessionId', item_key='ItemId', time_key='Time',other_variables_1=False,other_variables_2=False,lat="lat",long="long",desktop="Desktop",mobile="Mobile",tablet="Tablet"):
       
         self.remind = remind
         self.k = k
