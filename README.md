@@ -70,7 +70,7 @@ Validation set
 | Session KNN       | 0.5524    | 0.1930 |
 | VM SKNN           | 0.6001    | 0.2089 |
 
-### Category GRU4Rec
+### Article GRU4Rec
 
 For each loss types, I did only two parameters tuning (temporarily): hidden_size (500,750,1000), learning_rate (0.01,0.02,0.03). Following choose parameters set with the best Recall@20 performance:
 
@@ -82,5 +82,7 @@ For each loss types, I did only two parameters tuning (temporarily): hidden_size
 
 ## Future Steps
 
-+ Write my explaination for baseline models: sknn and vmsknn
++ *Write my explaination for baseline models: sknn and vmsknn* 
++ read papers about basic GRU4Rec
+
 + Read papers about advanced GRU4Rec
